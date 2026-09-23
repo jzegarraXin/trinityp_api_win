@@ -44,16 +44,17 @@ if (!$autenticado) {
 <title>Acceso · API WIN · XINTEC</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#0f1720;color:#e6edf3;min-height:100vh;display:flex;align-items:center;justify-content:center}
-  .box{background:#16202b;border:1px solid #24313f;border-radius:12px;padding:28px 30px;width:340px}
-  .box h1{font-size:17px;margin-bottom:2px}
-  .box .sub{color:#8b98a5;font-size:12.5px;margin-bottom:20px}
-  .box label{display:block;font-size:12.5px;color:#c2ccd6;margin:12px 0 4px}
-  .box input{width:100%;padding:9px 11px;background:#0c1520;border:1px solid #2d3f52;border-radius:8px;color:#e6edf3;font-size:13.5px}
-  .box input:focus{outline:none;border-color:#5fb3ff}
-  .btn{width:100%;margin-top:20px;background:#e8b93d;color:#0f1720;border:0;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer}
-  .btn:hover{background:#f1c75b}
-  .err{background:#261312;border:1px solid #f85149;color:#f85149;border-radius:8px;padding:8px 12px;font-size:12.5px;margin-bottom:12px}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:linear-gradient(160deg,#08203c 0%,#0b2a4a 60%,#0e3460 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .box{background:#ffffff;border:1px solid #d7dee8;border-radius:14px;padding:30px 32px;width:350px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+  .box h1{font-size:18px;margin-bottom:2px;color:#0b2a4a}
+  .box .sub{color:#6b7280;font-size:12.5px;margin-bottom:22px}
+  .box label{display:block;font-size:12.5px;color:#374151;margin:12px 0 4px;font-weight:600}
+  .box input{width:100%;padding:9px 11px;background:#fff;border:1px solid #c3cedd;border-radius:8px;color:#111827;font-size:13.5px}
+  .box input:focus{outline:none;border-color:#a3201d;box-shadow:0 0 0 2px rgba(163,32,29,.15)}
+  .btn{width:100%;margin-top:20px;background:#a3201d;color:#fff;border:0;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#7e1613}
+  .err{background:#fbeceb;border:1px solid #f3c2bd;color:#8b1e1e;border-radius:8px;padding:8px 12px;font-size:12.5px;margin-bottom:12px}
+  .pie{text-align:center;margin-top:18px;font-size:11px;color:#c7d3e4}
 </style>
 </head>
 <body>
@@ -66,6 +67,7 @@ if (!$autenticado) {
     <label for="p">Contraseña</label>
     <input id="p" name="contrasena" type="password" autocomplete="current-password" required>
     <button class="btn" type="submit" name="login" value="1">Ingresar</button>
+    <div class="pie">WI-NET TELECOM · Portal operativo</div>
   </form>
 </body>
 </html><?php
@@ -302,7 +304,7 @@ $qs = urlFiltros();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>API WIN · Historial de órdenes · XINTEC</title>
 <style>
-  :root{--azul:#0b2a4a;--acento:#e8b93d;}
+  :root{--azul:#0b2a4a;--acento:#a3201d;}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#f2f4f8;color:#222}
   .top{background:var(--azul);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
