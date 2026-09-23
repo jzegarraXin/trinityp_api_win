@@ -1,5 +1,6 @@
 # Credenciales / archivos que NO se suben a GitHub
 config/database.php
 config/credentials.php
+config/auth.php
 logs/
 *.log

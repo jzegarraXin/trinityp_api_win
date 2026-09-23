@@ -11,18 +11,21 @@ descarga CSV para Operaciones.
 | Servidor | `172.30.10.12` (`/var/www/biosac.net/public/trinityp_api_win/`) |
 | Base de datos | `trinityp_api_win` en `10.10.0.7` |
 | API cliente | `win-phoenixservicelayer.azurewebsites.net` |
-| Ejecución periódica | cron cada hora (`0 * * * *`) |
+| Ejecución periódica | cron diario `0 5 * * *` y `30 23 * * *` |
+| Acceso web | login simple (`config/auth.php`) · usuario `admin` |
 
 ## Estructura
 
 ```
 trinityp_api_win/
-├── index.php                  Vista consolidada (filtros + descarga CSV + "consumir ahora")
+├── index.php                  Vista consolidada (login simple + filtros + descarga CSV + "consumir ahora")
 ├── config/
 │   ├── database.php           Conexión SQL Server (10.10.0.7)  [NO se sube a GitHub]
 │   ├── database.sample.php    Plantilla de conexión
 │   ├── credentials.php        Credenciales API del cliente       [NO se sube a GitHub]
-│   └── credentials.sample.php Plantilla de credenciales
+│   ├── credentials.sample.php Plantilla de credenciales
+│   ├── auth.php               Usuario/contraseña del login web   [NO se sube a GitHub]
+│   └── auth.sample.php        Plantilla del login
 ├── lib/
 │   └── ApiWin.php             Cliente de la API (login JWT + CargarDatos + upsert dedupe)
 ├── scripts/
@@ -50,11 +53,15 @@ php sql/instalar.php
 php scripts/consumir.php
 ```
 
-5. **Cron** (cada hora, minuto 0) en `/etc/crontab` o `crontab -u www-data -e`:
+5. **Cron** (diario 5:00 y 23:30) en `crontab -u www-data -e`:
 
 ```
-0 * * * * www-data php /var/www/biosac.net/public/trinityp_api_win/scripts/consumir.php >> /var/www/biosac.net/public/trinityp_api_win/logs/consumir.log 2>&1
+0 5 * * * php /var/www/biosac.net/public/trinityp_api_win/scripts/consumir.php >> /var/www/biosac.net/public/trinityp_api_win/logs/consumir.log 2>&1
+30 23 * * * php /var/www/biosac.net/public/trinityp_api_win/scripts/consumir.php >> /var/www/biosac.net/public/trinityp_api_win/logs/consumir.log 2>&1
 ```
+
+6. **Login web:** `cp config/auth.sample.php config/auth.php` y define usuario/contraseña compleja.
+   La web exige ese login; el cron CLI no lo necesita.
 
 ## Cómo funciona el dedupe
 

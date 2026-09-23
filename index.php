@@ -2,6 +2,7 @@
 /**
  * trinityp_api_win - Vista consolidada para Operaciones.
  *
+ * - Acceso con login simple (config/auth.php).
  * - Consulta con filtros y paginacion sobre el historico (dbo.win_ordenes).
  * - Descarga CSV (todas las columnas de la vista dbo.vw_win_ordenes).
  * - "Consumir ahora" (requiere webkey) para ejecutar una sincronizacion con la API.
@@ -11,6 +12,71 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 date_default_timezone_set('America/Lima');
+
+session_start();
+
+$auth       = require __DIR__ . '/config/auth.php';
+$loginError = null;
+$autenticado = !empty($_SESSION['win_login']);
+
+if (!$autenticado) {
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['login'])) {
+        $u = trim((string)($_POST['usuario'] ?? ''));
+        $p = (string)($_POST['contrasena'] ?? '');
+        if (hash_equals($auth['usuario'], $u) && hash_equals($auth['contrasena'], $p)) {
+            session_regenerate_id(true);
+            $_SESSION['win_login'] = true;
+            $autenticado = true;
+        } else {
+            $loginError = 'Usuario o contrase\u00f1a incorrecta.';
+        }
+    }
+}
+
+if (!$autenticado) {
+    header('Content-Type: text/html; charset=utf-8');
+?><!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Acceso · API WIN · XINTEC</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#0f1720;color:#e6edf3;min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .box{background:#16202b;border:1px solid #24313f;border-radius:12px;padding:28px 30px;width:340px}
+  .box h1{font-size:17px;margin-bottom:2px}
+  .box .sub{color:#8b98a5;font-size:12.5px;margin-bottom:20px}
+  .box label{display:block;font-size:12.5px;color:#c2ccd6;margin:12px 0 4px}
+  .box input{width:100%;padding:9px 11px;background:#0c1520;border:1px solid #2d3f52;border-radius:8px;color:#e6edf3;font-size:13.5px}
+  .box input:focus{outline:none;border-color:#5fb3ff}
+  .btn{width:100%;margin-top:20px;background:#e8b93d;color:#0f1720;border:0;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#f1c75b}
+  .err{background:#261312;border:1px solid #f85149;color:#f85149;border-radius:8px;padding:8px 12px;font-size:12.5px;margin-bottom:12px}
+</style>
+</head>
+<body>
+  <form class="box" method="post">
+    <h1>XINTEC · API WIN</h1>
+    <div class="sub">Acceso restringido · consumo de la API de WI-NET TELECOM</div>
+    <?php if ($loginError): ?><div class="err"><?php echo htmlspecialchars($loginError, ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
+    <label for="u">Usuario</label>
+    <input id="u" name="usuario" type="text" autocomplete="username" required autofocus>
+    <label for="p">Contraseña</label>
+    <input id="p" name="contrasena" type="password" autocomplete="current-password" required>
+    <button class="btn" type="submit" name="login" value="1">Ingresar</button>
+  </form>
+</body>
+</html><?php
+    exit;
+}
+
+if (isset($_GET['salir'])) {
+    session_destroy();
+    header('Location: ' . (strtok($_SERVER['REQUEST_URI'] ?? '', '?') ?: '.'));
+    exit;
+}
 
 $config = require __DIR__ . '/config/database.php';
 
@@ -278,6 +344,7 @@ $qs = urlFiltros();
   <h1>XINTEC · API WIN</h1>
   <span class="sub">Historial de órdenes del service layer (WI-NET TELECOM)</span>
   <a class="brand" href="https://trinity.xintech.pe/">&larr; Panel</a>
+  <a class="brand" href="?salir=1">Salir (<?= esc($auth['usuario']) ?>)</a>
 </div>
 
 <div class="wrap">
